@@ -5,7 +5,7 @@
 
   let handleChange = debounce(function(e) {
     $query = e.target.value;
-  }, 500);
+  }, 200);
 </script>
 
 <h1>Welcome on Turtlax!</h1>
@@ -17,12 +17,12 @@
   <button type="submit">Search</button>
 </form>
 
-{#each $results as show}
-  <Result item={show} />
+{#each $results as item}
+  <Result item={item._source} />
   <hr />
 {/each}
 <div>
-  <button on:click={()=>($page -= 1)}>Prev</button>
+  <button on:click={() => ($page -= 1)}>Prev</button>
   <span>{$page}</span>
-  <button on:click={()=>($page += 1)}>Next</button>
+  <button on:click={() => ($page += 1)}>Next</button>
 </div>
