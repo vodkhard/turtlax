@@ -16,12 +16,32 @@ app.get('/search', (req, res) => {
       body: {
         sort: [{ weight: 'desc' }],
         query: {
-          match: {
-            name: {
-              query: params.query,
-              operator: 'and',
-              fuzziness: 'auto'
-            }
+          multi_match: {
+            query: params.query,
+            operator: 'and',
+            fuzziness: 'auto',
+            fields: ['name', 'externals.imdb.keyword']
+          }
+        }
+      }
+    })
+    .then(({ body }) => {
+      res.status(200).send(body.hits.hits);
+    })
+    .catch(console.error);
+});
+
+app.get('/shows/:id/episodes', (req, res) => {
+  const show_id = req.params.id;
+  client
+    .search({
+      index: 'tv_shows_episodes',
+      body: {
+        size: 10000,
+        sort: [{ season: 'desc' }, { number: 'desc' }],
+        query: {
+          term: {
+            tv_show_id: show_id
           }
         }
       }
