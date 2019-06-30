@@ -1,6 +1,6 @@
 <script>
   import { debounce } from "lodash";
-  import Result from "./components/Result.svelte";
+  import Results from "./components/results/List.svelte";
   import { query, page, results } from "./stores/search";
 
   let handleChange = debounce(function(e) {
@@ -17,10 +17,10 @@
   <button type="submit">Search</button>
 </form>
 
-{#each $results as item}
-  <Result item={item._source} />
-  <hr />
-{/each}
+{#if $results.hits}
+  <Results hits={$results.hits} aggregations={$results.aggregations} />
+{/if}
+
 <div>
   <button on:click={() => ($page -= 1)}>Prev</button>
   <span>{$page}</span>

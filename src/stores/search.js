@@ -2,15 +2,23 @@ import { derived, writable } from 'svelte/store';
 
 export const query = writable('');
 export const page = writable(1);
+export const filters = writable([]);
 export const results = derived(
-  [query, page],
-  ([$query, $page], set) => {
+  [query, filters],
+  ([$query, $filters], set) => {
+    const url = new URL('http://localhost:3005/search');
+    url.searchParams.append('query', $query);
+    $filters.forEach(({ name, value }) => {
+      url.searchParams.append(`filters[${name}]`, value);
+    });
+
     if ($query === '') {
+      return null;
     } else {
-      fetch(`http://localhost:3005/search?query=${$query}`)
+      fetch(url.toString())
         .then(data => data.json())
-        .then(shows => {
-          set(shows);
+        .then(results => {
+          set(results);
         });
     }
   },

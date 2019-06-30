@@ -10,12 +10,11 @@ app.use(bodyparser.json());
 
 app.get('/search', (req, res) => {
   const params = req.query;
-  client
-    .search({
-      index: 'tv_shows',
-      body: {
-        sort: [{ weight: 'desc' }],
-        query: {
+  const body = {
+    sort: [{ weight: 'desc' }],
+    query: {
+      bool: {
+        must: {
           multi_match: {
             query: params.query,
             operator: 'and',
@@ -24,9 +23,31 @@ app.get('/search', (req, res) => {
           }
         }
       }
+    },
+    aggs: {
+      genres: {
+        terms: { field: 'genres.keyword' }
+      }
+    }
+  };
+
+  if (params.filters) {
+    const term = {};
+    Object.entries(params.filters).forEach(([type, value]) => {
+      term[`${type}.keyword`] = value;
+    });
+    body.query.bool.filter = { term };
+  }
+  client
+    .search({
+      index: 'tv_shows',
+      body
     })
     .then(({ body }) => {
-      res.status(200).send(body.hits.hits);
+      res.status(200).send({
+        hits: body.hits,
+        aggregations: body.aggregations
+      });
     })
     .catch(console.error);
 });
