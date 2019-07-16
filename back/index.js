@@ -8,6 +8,11 @@ const app = express();
 app.use(cors('*'));
 app.use(bodyparser.json());
 
+const aggs = {
+  genres: { terms: { field: 'genres.keyword' } },
+  web_diffuser: { terms: { field: 'webChannel.name.keyword' } }
+};
+
 app.get('/search', (req, res) => {
   const params = req.query;
   const body = {
@@ -24,11 +29,7 @@ app.get('/search', (req, res) => {
         }
       }
     },
-    aggs: {
-      genres: {
-        terms: { field: 'genres.keyword' }
-      }
-    }
+    aggs
   };
 
   if (params.filters) {
@@ -68,11 +69,7 @@ app.get('/trends', (req, res) => {
       }
     },
     sort: [{ 'rating.average': 'desc' }],
-    aggs: {
-      genres: {
-        terms: { field: 'genres.keyword' }
-      }
-    }
+    aggs
   };
 
   if (params.filters) {
