@@ -1,30 +1,33 @@
 <script>
-  import { onMount } from "svelte";
-
-  export let tv_id = null;
-  export let tv_show = {};
-
-  onMount(() => {
-    if (tv_id !== null) {
-      fetch(`http://localhost:3005/shows/${tv_id}`)
-        .then(res => res.json())
-        .then(data => (episodes = data.map(d => d._source)));
-    }
-  });
+  export let background = "";
 </script>
 
 <style>
-  .bold {
-    font-weight: bold;
+  .overlay {
+    transition: opacity 100ms;
+    opacity: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    height: 100%;
+  }
+  .overlay__content {
+    padding: 20px 25px;
+  }
+  .overlay:hover {
+    opacity: 1;
+  }
+  .summary {
+    height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 </style>
 
-<div>
-  {#if tv_show.image}
-    <img src={tv_show.image.medium} alt="Poster" width="100" />
-  {/if}
-  <div class="bold">{tv_show.name}</div>
-  {#if tv_show.summary}
-    {@html tv_show.summary}
-  {/if}
+<div class="summary" style={`background-image: url(${background})`}>
+  <div class="overlay">
+    <div class="overlay__content">
+      <slot />
+    </div>
+  </div>
 </div>

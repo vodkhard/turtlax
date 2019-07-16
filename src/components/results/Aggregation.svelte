@@ -17,18 +17,11 @@
   };
 </script>
 
-<style>
-  .bucket {
-    display: flex;
-    flex-direction: column;
-  }
-</style>
-
-<div transition:fade={{ duration: 500 }}>
-  <div>{type}</div>
-  <div class="bucket">
+<div transition:fade={{ duration: 100 }}>
+  <label>{type}</label>
+  <select on:change={e => handleFilter(e.target.value)}>
     {#each buckets as { key, doc_count }}
-      <button on:click={() => handleFilter(key)}>{key} [{doc_count}]</button>
+      <option value={key}>{key} [{doc_count}]</option>
     {/each}
-  </div>
+  </select>
 </div>

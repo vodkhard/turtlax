@@ -52,6 +52,54 @@ app.get('/search', (req, res) => {
     .catch(console.error);
 });
 
+app.get('/trends', (req, res) => {
+  const params = req.query;
+  const body = {
+    query: {
+      bool: {
+        must: [{ match: { 'status.keyword': 'Running' } }],
+        filter: [
+          {
+            range: {
+              premiered: { gte: `2019-01-01` }
+            }
+          }
+        ]
+      }
+    },
+    sort: [{ 'rating.average': 'desc' }],
+    aggs: {
+      genres: {
+        terms: { field: 'genres.keyword' }
+      }
+    }
+  };
+
+  if (params.filters) {
+    const filter = body.query.bool.filter;
+    Object.entries(params.filters).forEach(([type, value]) => {
+      filter.push({
+        term: {
+          [`${type}.keyword`]: value
+        }
+      });
+    });
+    body.query.bool.filter = filter;
+  }
+
+  client
+    .search({
+      index: 'tv_shows',
+      body
+    })
+    .then(({ body }) => {
+      res.status(200).send({
+        hits: body.hits,
+        aggregations: body.aggregations
+      });
+    });
+});
+
 app.get('/shows/:id/episodes', (req, res) => {
   const show_id = req.params.id;
   client

@@ -5,15 +5,24 @@
   import Aggregation from "./Aggregation.svelte";
 
   export let hits;
-  export let aggregations;
+  export let aggregations = {};
 </script>
 
 <style>
   .container {
     display: flex;
+    width: 100vw;
   }
-  .left {
-    flex: 20%;
+
+  .shows_container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .shows_container--item {
+    max-width: 20%;
+    width: 100%;
+    max-height: 550px;
   }
 </style>
 
@@ -24,11 +33,11 @@
       <Aggregation {type} {buckets} />
     {/each}
   </div>
-  <div class="right">
-    <div>{hits.total} series found !</div>
+  <div class="shows_container">
     {#each hits.hits as item}
-      <Result item={item._source} />
-      <hr />
+      <div class="shows_container--item">
+        <Result item={item._source} />
+      </div>
     {/each}
   </div>
 </div>
