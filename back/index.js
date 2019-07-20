@@ -23,7 +23,6 @@ app.get('/search', (req, res) => {
           multi_match: {
             query: params.query,
             operator: 'and',
-            fuzziness: 'auto',
             fields: ['name', 'externals.imdb.keyword']
           }
         }

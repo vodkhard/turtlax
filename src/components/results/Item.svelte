@@ -18,17 +18,15 @@
 </style>
 
 <div class="item" transition:fade={{ duration: 500 }}>
-  <Summary background={item.image.medium}>
+  <Summary background={item.image.original}>
     <div class="title bold">{item.name}</div>
-    {#if item.summary}
+    {#if displayDetails}
+      <EpisodesList tv_id={item.id} />
+    {:else if item.summary}
       {@html item.summary}
     {/if}
     <button on:click={() => (displayDetails = !displayDetails)}>
-      List of episodes
+      {displayDetails ? 'Summary' : 'List of episodes'}
     </button>
   </Summary>
-
-  <!-- {#if displayDetails}
-    <EpisodesList tv_id={item.id} />
-  {/if} -->
 </div>

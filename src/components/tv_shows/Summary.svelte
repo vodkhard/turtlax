@@ -9,6 +9,7 @@
     background-color: rgba(0, 0, 0, 0.6);
     color: #fff;
     height: 100%;
+    overflow-y: scroll;
   }
   .overlay__content {
     padding: 20px 25px;
