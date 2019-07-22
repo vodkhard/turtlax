@@ -22,7 +22,11 @@
 {/if}
 
 <div>
-  <button on:click={() => ($page -= 1)}>Prev</button>
+  <button on:click={() => {
+    if ($page > 1) {
+      $page -= 1
+    }
+  }}>Prev</button>
   <span>{$page}</span>
   <button on:click={() => ($page += 1)}>Next</button>
 </div>
