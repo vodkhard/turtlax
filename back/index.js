@@ -16,7 +16,8 @@ const aggs = {
 app.get('/search', (req, res) => {
   const params = req.query;
   const body = {
-    sort: [{ weight: 'desc' }],
+    from: (params.page - 1) * 10,
+    size: 10,
     query: {
       bool: {
         must: {
