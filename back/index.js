@@ -10,8 +10,15 @@ app.use(bodyparser.json());
 
 const aggs = {
   genres: { terms: { field: 'genres.keyword' } },
-  web_diffuser: { terms: { field: 'webChannel.name.keyword' } }
+  web_diffuser: { terms: { field: 'webChannel.name.keyword' } },
+  status: { terms: { field: 'status.keyword' } },
+  language: { terms: { field: 'language.keyword' } }
 };
+
+const should = [
+  { range: { 'rating.average': { boost: 4, gte: 8 } } },
+  { range: { weight: { boost: 4, gte: 90 } } }
+];
 
 app.get('/search', (req, res) => {
   const params = req.query;
@@ -24,9 +31,11 @@ app.get('/search', (req, res) => {
           multi_match: {
             query: params.query,
             operator: 'and',
+            fuzziness: 'auto',
             fields: ['name', 'externals.imdb.keyword']
           }
-        }
+        },
+        should
       }
     },
     aggs
@@ -59,6 +68,7 @@ app.get('/trends', (req, res) => {
     query: {
       bool: {
         must: [{ match: { 'status.keyword': 'Running' } }],
+        should,
         filter: [
           {
             range: {
